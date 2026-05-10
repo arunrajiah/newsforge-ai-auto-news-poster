@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: RSS AI Post Generator
- * Plugin URI: https://github.com/arunrajiah/arunai-auto-news-poster
+ * Plugin Name: ArunAI – Auto News Poster
+ * Plugin URI: https://github.com/arunrajiah/ai-auto-news-poster
  * Description: Auto-generate blog posts from the latest news using AI. Supports manual and automatic WP-Cron scheduling with optional DALL-E 3 featured image generation.
  * Version: 1.0.8
  * Author: Arun Rajiah
@@ -97,7 +97,6 @@ class AANP_Plugin {
 		require_once AANP_PLUGIN_DIR . 'includes/class-image-generator.php';
 		require_once AANP_PLUGIN_DIR . 'includes/class-post-creator.php';
 		require_once AANP_PLUGIN_DIR . 'includes/class-scheduler.php';
-		require_once AANP_PLUGIN_DIR . 'includes/class-pro-features.php';
 	}
 
 	/**
@@ -117,20 +116,20 @@ class AANP_Plugin {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
 				$php_version = PHP_VERSION;
 				/* translators: %s: PHP version number */
-				$message = sprintf( __( 'NewsForge requires PHP 7.4 or higher. Your current version is %s', 'arunai-auto-news-poster' ), $php_version );
+				$message = sprintf( __( 'ArunAI – Auto News Poster requires PHP 7.4 or higher. Your current version is %s', 'arunai-auto-news-poster' ), $php_version );
 				wp_die( esc_html( $message ) );
 			}
 
 			// Check WordPress version.
-			if ( version_compare( get_bloginfo( 'version' ), '5.0', '<' ) ) {
+			if ( version_compare( get_bloginfo( 'version' ), '5.1', '<' ) ) {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
-				wp_die( esc_html__( 'NewsForge requires WordPress 5.1 or higher.', 'arunai-auto-news-poster' ) );
+				wp_die( esc_html__( 'ArunAI – Auto News Poster requires WordPress 5.1 or higher.', 'arunai-auto-news-poster' ) );
 			}
 
 			// Check required functions.
 			if ( ! function_exists( 'wp_remote_get' ) || ! function_exists( 'wp_remote_post' ) ) {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
-				wp_die( esc_html__( 'NewsForge requires WordPress HTTP API functions.', 'arunai-auto-news-poster' ) );
+				wp_die( esc_html__( 'ArunAI – Auto News Poster requires WordPress HTTP API functions.', 'arunai-auto-news-poster' ) );
 			}
 
 			// Set default options.
@@ -191,34 +190,6 @@ class AANP_Plugin {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
-	}
-
-	/**
-	 * Get maximum posts per batch.
-	 */
-	public static function get_max_posts_per_batch(): int {
-		return 30;
-	}
-
-	/**
-	 * Check if scheduling is available (always true).
-	 */
-	public static function is_scheduling_available(): bool {
-		return true;
-	}
-
-	/**
-	 * Check if featured image generation is available (always true).
-	 */
-	public static function is_featured_images_available(): bool {
-		return true;
-	}
-
-	/**
-	 * Check if SEO features are available (always true).
-	 */
-	public static function is_seo_features_available(): bool {
-		return true;
 	}
 }
 

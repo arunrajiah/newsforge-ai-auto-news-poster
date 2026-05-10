@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="RSS AI Post Generator">
-    <description>WordPress coding standards for RSS AI Post Generator plugin.</description>
+<ruleset name="ArunAI – Auto News Poster">
+    <description>WordPress coding standards for ArunAI – Auto News Poster plugin.</description>
 
     <!-- What to scan -->
     <file>.</file>
@@ -50,9 +50,11 @@
     -->
     <rule ref="WordPress.Files.FileName.InvalidClassFileName">
         <exclude-pattern>newsforge-ai-auto-news-poster.php</exclude-pattern>
+        <exclude-pattern>arunai-auto-news-poster.php</exclude-pattern>
     </rule>
     <rule ref="Universal.Files.SeparateFunctionsFromOO.Mixed">
         <exclude-pattern>newsforge-ai-auto-news-poster.php</exclude-pattern>
+        <exclude-pattern>arunai-auto-news-poster.php</exclude-pattern>
     </rule>
 
     <!-- Inline-comment punctuation and doc-comment style rules are informational only. -->

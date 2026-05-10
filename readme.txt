@@ -1,4 +1,4 @@
-=== RSS AI Post Generator ===
+=== ArunAI – Auto News Poster ===
 Contributors: arunrajiah
 Tags: ai, news, auto-posting, openai, rss
 Requires at least: 5.1
@@ -12,7 +12,7 @@ Auto-generate unique blog posts from the latest news using OpenAI, Claude, or an
 
 == Description ==
 
-RSS AI Post Generator transforms the latest news articles into unique, engaging blog posts using OpenAI, Anthropic Claude, or any OpenAI-compatible API. Perfect for news sites, blogs, and content creators who want to stay on top of trending topics without the manual effort.
+ArunAI – Auto News Poster transforms the latest news articles into unique, engaging blog posts using OpenAI, Anthropic Claude, or any OpenAI-compatible API. Perfect for news sites, blogs, and content creators who want to stay on top of trending topics without the manual effort.
 
 **Key Features:**
 
@@ -134,7 +134,7 @@ The plugin fetches articles from RSS feeds configured by the site administrator.
 
 * BBC News — https://feeds.bbci.co.uk/news/rss.xml — Privacy: https://www.bbc.com/privacy
 * CNN — https://rss.cnn.com/rss/edition.rss — Privacy: https://www.cnn.com/privacy
-* Reuters — https://feeds.reuters.com/reuters/topNews — Privacy: https://www.reuters.com/privacy-policy
+* Reuters — https://feeds.reuters.com/reuters/topNews — Privacy: https://www.thomsonreuters.com/en/privacy-statement.html
 
 What is sent: a standard HTTP GET request (no personal data, no cookies). The feed URLs are configurable — administrators can add, remove, or replace any feed.
 
@@ -151,11 +151,12 @@ No data is transmitted to any external service without the site administrator ex
 == Changelog ==
 
 = 1.0.8 =
-* Renamed plugin to "RSS AI Post Generator" to comply with WordPress.org trademark guidelines
-* Removed all Pro/license gating — all features (scheduling, featured images, up to 30 posts per batch) are now fully available to all users
-* Added `== External Services ==` section to readme.txt documenting RSS feeds, OpenAI, and Anthropic API usage
-* Removed "Upgrade to Pro" banner and locked "Coming Soon" sections from settings page
-* Fixed class name reference (AI_Auto_News_Poster → AANP_Plugin) in scheduler and admin settings
+* Renamed plugin to "ArunAI – Auto News Poster" per WordPress.org directory guidelines
+* Removed all feature-gating code: no license checks, no locked functionality
+* Removed get_max_posts_per_batch() and class-pro-features.php; all features fully available
+* Fixed Plugin URI and support URLs to point to the correct GitHub repository
+* Fixed Reuters privacy policy link (replaced 401 URL with working Thomson Reuters page)
+* Removed "free version" comment from batch-size code
 
 = 1.0.7 =
 * WP-Cron scheduling — new Automation section in settings; choose hourly / every 6 h / twice daily / daily; next-run time shown inline
@@ -207,8 +208,8 @@ Important security update: API keys are now encrypted at rest. Existing plaintex
 
 == Support ==
 
-* Bug reports / feature requests: https://github.com/arunrajiah/arunai-auto-news-poster/issues
-* Documentation: https://github.com/arunrajiah/arunai-auto-news-poster
+* Bug reports / feature requests: https://github.com/arunrajiah/ai-auto-news-poster/issues
+* Documentation: https://github.com/arunrajiah/ai-auto-news-poster
 
 == Privacy Policy ==
 
@@ -236,7 +237,7 @@ This plugin sends article headlines and summaries to your configured AI provider
 
 * BBC News — https://www.bbc.com/privacy
 * CNN — https://www.cnn.com/privacy
-* Reuters — https://www.reuters.com/privacy-policy
+* Reuters — https://www.thomsonreuters.com/en/privacy-statement.html
 
 Users can add, remove, or replace these feeds at any time.
 

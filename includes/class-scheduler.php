@@ -86,7 +86,6 @@ class AANP_Scheduler {
 		$image_gen    = new AANP_Image_Generator();
 
 		$settings        = get_option( 'aanp_settings', array() );
-		$max             = AANP_Plugin::get_max_posts_per_batch();
 		$featured_images = ! empty( $settings['featured_images'] );
 
 		$articles = $news_fetch->fetch_latest_news();
@@ -95,7 +94,7 @@ class AANP_Scheduler {
 			return;
 		}
 
-		$articles = array_slice( $articles, 0, $max );
+		$articles = array_slice( $articles, 0, 5 );
 
 		foreach ( $articles as $article ) {
 			try {

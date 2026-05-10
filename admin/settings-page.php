@@ -25,11 +25,11 @@ $aanp_recent_posts = $aanp_post_creator->get_recent_posts( 5 );
 	<div class="aanp-author-strip">
 		<div class="aanp-author-strip__logo">
 			<span class="aanp-author-strip__logo-mark">AI</span>
-			<span class="aanp-author-strip__logo-name">RSS AI Post</span>
+			<span class="aanp-author-strip__logo-name">ArunAI</span>
 		</div>
 		<div class="aanp-author-strip__body">
 			<p class="aanp-author-strip__credit">
-				<?php esc_html_e( 'NewsForge is a free WordPress plugin developed and maintained by', 'arunai-auto-news-poster' ); ?>
+				<?php esc_html_e( 'ArunAI – Auto News Poster is a free WordPress plugin developed and maintained by', 'arunai-auto-news-poster' ); ?>
 				<a href="https://github.com/arunrajiah" target="_blank" rel="noopener">arunrajiah</a>.
 			</p>
 			<p class="aanp-author-strip__sponsor">

@@ -30,8 +30,8 @@ class AANP_Admin_Settings {
 	 */
 	public function add_admin_menu() {
 		add_options_page(
-			__( 'RSS AI Post Generator', 'arunai-auto-news-poster' ),
-			__( 'RSS AI Post Generator', 'arunai-auto-news-poster' ),
+			__( 'ArunAI – Auto News Poster', 'arunai-auto-news-poster' ),
+			__( 'ArunAI – Auto News Poster', 'arunai-auto-news-poster' ),
 			'manage_options',
 			'arunai-auto-news-poster',
 			array( $this, 'settings_page' )
@@ -213,7 +213,7 @@ class AANP_Admin_Settings {
 	 * Main section callback
 	 */
 	public function main_section_callback() {
-		echo '<p>' . esc_html__( 'Configure your RSS AI Post Generator settings below.', 'arunai-auto-news-poster' ) . '</p>';
+		echo '<p>' . esc_html__( 'Configure your ArunAI – Auto News Poster settings below.', 'arunai-auto-news-poster' ) . '</p>';
 	}
 
 	/**
@@ -461,7 +461,7 @@ class AANP_Admin_Settings {
 				return;
 			}
 
-			// Limit to 5 posts for free version
+			// Process up to 5 articles per batch.
 			$articles = array_slice( $articles, 0, 5 );
 
 			$generated_posts = array();
@@ -567,8 +567,7 @@ class AANP_Admin_Settings {
 			return;
 		}
 
-		$max      = AANP_Plugin::get_max_posts_per_batch();
-		$articles = array_slice( $articles, 0, $max );
+		$articles = array_slice( $articles, 0, 5 );
 
 		// Return lightweight stubs (no content) so the payload stays small
 		$stubs = array_map(
