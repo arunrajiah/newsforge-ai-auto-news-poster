@@ -1,302 +1,213 @@
-jQuery(document).ready(function($) {
+/* global aanp_ajax */
+jQuery( document ).ready( function ( $ ) {
 
-    // Pro upgrade button
-    $(document).on('click', '.aanp-pro-upgrade-btn', function(e) {
-        e.preventDefault();
-        /* global aanp_ajax */
-        alert(aanp_ajax.pro_coming_soon_text);
-    });
+	// ── Tab switching ──────────────────────────────────────────────────────
+	$( '.aanp-tab-btn' ).on( 'click', function () {
+		var tab = $( this ).data( 'tab' );
 
-    // Dismiss pro notice
-    $(document).on('click', '.aanp-dismiss-pro-notice', function(e) {
-        e.preventDefault();
-        $(this).closest('.aanp-pro-notice').fadeOut();
-    });
+		$( '.aanp-tab-btn' ).removeClass( 'is-active' ).attr( 'aria-selected', 'false' );
+		$( '.aanp-tab-pane' ).removeClass( 'is-active' );
 
-    // Add RSS Feed functionality
-    $('#add-feed').on('click', function() {
-        var container = $('#rss-feeds-container');
-        var newRow    = $('<div class="rss-feed-row">');
-        newRow.html(
-            '<input type="url" name="aanp_settings[rss_feeds][]" value="" class="regular-text" placeholder="https://example.com/feed.xml" /> ' +
-            '<button type="button" class="button test-feed">Test</button> ' +
-            '<button type="button" class="button remove-feed">Remove</button> ' +
-            '<span class="feed-test-result"></span>'
-        );
-        container.append(newRow);
-    });
+		$( this ).addClass( 'is-active' ).attr( 'aria-selected', 'true' );
+		$( '#aanp-tab-' + tab ).addClass( 'is-active' );
 
-    // Test RSS feed URL
-    $(document).on('click', '.test-feed', function() {
-        var row      = $(this).closest('.rss-feed-row');
-        var feedUrl  = row.find('input[type="url"]').val().trim();
-        var result   = row.find('.feed-test-result');
+		// persist active tab in localStorage so refresh stays on same tab
+		try { localStorage.setItem( 'aanp_active_tab', tab ); } catch ( e ) {}
+	} );
 
-        if (!feedUrl) {
-            result.html('<span class="aanp-status-error">Enter a URL first.</span>');
-            return;
-        }
+	// restore last active tab
+	try {
+		var savedTab = localStorage.getItem( 'aanp_active_tab' );
+		if ( savedTab ) {
+			$( '.aanp-tab-btn[data-tab="' + savedTab + '"]' ).trigger( 'click' );
+		}
+	} catch ( e ) {}
 
-        var btn = $(this).prop('disabled', true).text('Testing…');
+	// ── Add RSS Feed ───────────────────────────────────────────────────────
+	$( '#add-feed' ).on( 'click', function () {
+		var row = $(
+			'<div class="rss-feed-row">' +
+			'<input type="url" name="aanp_settings[rss_feeds][]" value="" placeholder="https://example.com/feed.xml" />' +
+			'<button type="button" class="test-feed">' + aanp_ajax.test_text + '</button>' +
+			'<button type="button" class="remove-feed">&#x2715;</button>' +
+			'<span class="feed-test-result"></span>' +
+			'</div>'
+		);
+		$( '#rss-feeds-container' ).append( row );
+		row.find( 'input' ).focus();
+	} );
 
-        $.ajax({
-            url: aanp_ajax.ajax_url,
-            type: 'POST',
-            data: { action: 'aanp_test_feed', nonce: aanp_ajax.nonce, feed_url: feedUrl },
-            success: function(response) {
-                if (response.success) {
-                    result.html('<span class="aanp-status-success">&#x2713; ' + escapeHtml(response.data.message) + '</span>');
-                } else {
-                    result.html('<span class="aanp-status-error">&#x2717; ' + escapeHtml(response.data || 'Error') + '</span>');
-                }
-            },
-            error: function() {
-                result.html('<span class="aanp-status-error">&#x2717; Request failed.</span>');
-            },
-            complete: function() {
-                btn.prop('disabled', false).text('Test');
-            }
-        });
-    });
-    
-    // Remove RSS Feed functionality
-    $(document).on('click', '.remove-feed', function() {
-        $(this).closest('.rss-feed-row').remove();
-    });
-    
-    // Generate Posts — two-phase: fetch article list, then generate one at a time
-    $('#aanp-generate-posts').on('click', function() {
-        var button      = $(this);
-        var statusDiv   = $('#aanp-generation-status');
-        var statusText  = $('#aanp-status-text');
-        var progressBar = $('.aanp-progress-bar');
-        var resultsDiv  = $('#aanp-generation-results');
-        var resultsList = $('#aanp-results-list');
+	// ── Test RSS Feed ──────────────────────────────────────────────────────
+	$( document ).on( 'click', '.test-feed', function () {
+		var row     = $( this ).closest( '.rss-feed-row' );
+		var feedUrl = row.find( 'input[type="url"]' ).val().trim();
+		var result  = row.find( '.feed-test-result' );
 
-        button.prop('disabled', true);
-        button.find('.dashicons').addClass('spin');
-        statusDiv.show();
-        resultsDiv.hide();
-        resultsList.empty();
-        progressBar.css('width', '0%');
-        statusText.text(aanp_ajax.generating_text);
+		if ( ! feedUrl ) {
+			result.html( '<span class="aanp-status-error">Enter a URL first.</span>' );
+			return;
+		}
 
-        // Phase 1: fetch article list
-        $.ajax({
-            url: aanp_ajax.ajax_url,
-            type: 'POST',
-            data: { action: 'aanp_fetch_articles', nonce: aanp_ajax.nonce },
-            success: function(response) {
-                if (!response.success) {
-                    var errMsg = (response.data && response.data.message) ? response.data.message : (response.data || aanp_ajax.error_text);
-                    statusText.html('<span class="aanp-status-error">&#x2717; ' + escapeHtml(errMsg) + '</span>');
-                    showAdminNotice(errMsg, 'error');
-                    finishGeneration(button, statusDiv);
-                    return;
-                }
+		var btn = $( this ).prop( 'disabled', true ).text( 'Testing…' );
 
-                var articles   = response.data.articles;
-                var total      = articles.length;
-                var completed  = 0;
-                var generated  = [];
+		$.ajax( {
+			url:  aanp_ajax.ajax_url,
+			type: 'POST',
+			data: { action: 'aanp_test_feed', nonce: aanp_ajax.nonce, feed_url: feedUrl },
+			success: function ( response ) {
+				if ( response.success ) {
+					result.html( '<span class="aanp-status-success">✓ ' + escapeHtml( response.data.message ) + '</span>' );
+				} else {
+					result.html( '<span class="aanp-status-error">✗ ' + escapeHtml( response.data || 'Error' ) + '</span>' );
+				}
+			},
+			error: function () {
+				result.html( '<span class="aanp-status-error">✗ Request failed.</span>' );
+			},
+			complete: function () {
+				btn.prop( 'disabled', false ).text( aanp_ajax.test_text );
+			}
+		} );
+	} );
 
-                if (total === 0) {
-                    statusText.html('<span class="aanp-status-error">&#x2717; ' + escapeHtml(aanp_ajax.error_text) + '</span>');
-                    finishGeneration(button, statusDiv);
-                    return;
-                }
+	// ── Remove RSS Feed ────────────────────────────────────────────────────
+	$( document ).on( 'click', '.remove-feed', function () {
+		$( this ).closest( '.rss-feed-row' ).slideUp( 200, function () {
+			$( this ).remove();
+		} );
+	} );
 
-                // Phase 2: generate each article sequentially for real progress
-                function generateNext(index) {
-                    if (index >= total) {
-                        // All done
-                        progressBar.css('width', '100%');
-                        var doneMsg = generated.length + ' ' + aanp_ajax.success_text;
+	// ── Generate Posts — two-phase ─────────────────────────────────────────
+	$( '#aanp-generate-posts' ).on( 'click', function () {
+		var button      = $( this );
+		var statusDiv   = $( '#aanp-generation-status' );
+		var statusText  = $( '#aanp-status-text' );
+		var progressBar = $( '.aanp-progress-bar' );
+		var resultsDiv  = $( '#aanp-generation-results' );
+		var resultsList = $( '#aanp-results-list' );
 
-                        if (generated.length > 0) {
-                            statusText.html('<span class="aanp-status-success">&#x2713; ' + escapeHtml(doneMsg) + '</span>');
-                            var listHtml = '<ul>';
-                            $.each(generated, function(i, post) {
-                                listHtml += '<li><strong>' + escapeHtml(post.title) + '</strong> <a href="' + escapeHtml(post.edit_link) + '" class="button button-small" target="_blank">Edit Post</a></li>';
-                            });
-                            listHtml += '</ul>';
-                            resultsList.html(listHtml);
-                            resultsDiv.show();
-                            showAdminNotice(doneMsg, 'success');
-                        } else {
-                            statusText.html('<span class="aanp-status-error">&#x2717; ' + escapeHtml(aanp_ajax.error_text) + '</span>');
-                            showAdminNotice(aanp_ajax.error_text, 'error');
-                        }
+		button.prop( 'disabled', true ).addClass( 'is-loading' );
+		button.find( '.dashicons' ).addClass( 'spin' );
+		statusDiv.slideDown( 200 );
+		resultsDiv.hide();
+		resultsList.empty();
+		progressBar.css( 'width', '0%' );
+		statusText.text( aanp_ajax.generating_text );
 
-                        finishGeneration(button, statusDiv);
-                        return;
-                    }
+		// Phase 1: fetch article list
+		$.ajax( {
+			url:  aanp_ajax.ajax_url,
+			type: 'POST',
+			data: { action: 'aanp_fetch_articles', nonce: aanp_ajax.nonce },
+			success: function ( response ) {
+				if ( ! response.success ) {
+					var errMsg = ( response.data && response.data.message ) ? response.data.message : ( response.data || aanp_ajax.error_text );
+					statusText.html( '<span class="aanp-status-error">✗ ' + escapeHtml( errMsg ) + '</span>' );
+					finishGeneration( button, statusDiv );
+					return;
+				}
 
-                    var article = articles[index];
-                    /* translators: %1$d current article number, %2$d total articles */
-                    statusText.text('(' + (index + 1) + '/' + total + ') ' + escapeHtml(article.title));
-                    progressBar.css('width', Math.round((index / total) * 100) + '%');
+				var articles  = response.data.articles;
+				var total     = articles.length;
+				var generated = [];
 
-                    $.ajax({
-                        url: aanp_ajax.ajax_url,
-                        type: 'POST',
-                        data: {
-                            action: 'aanp_generate_single',
-                            nonce:   aanp_ajax.nonce,
-                            article: article
-                        },
-                        success: function(res) {
-                            if (res.success) {
-                                generated.push(res.data);
-                            }
-                            completed++;
-                            generateNext(index + 1);
-                        },
-                        error: function() {
-                            completed++;
-                            generateNext(index + 1);
-                        }
-                    });
-                }
+				if ( total === 0 ) {
+					statusText.html( '<span class="aanp-status-error">✗ ' + escapeHtml( aanp_ajax.error_text ) + '</span>' );
+					finishGeneration( button, statusDiv );
+					return;
+				}
 
-                generateNext(0);
-            },
-            error: function(xhr, status, error) {
-                statusText.html('<span class="aanp-status-error">&#x2717; AJAX Error: ' + escapeHtml(error) + '</span>');
-                showAdminNotice(error, 'error');
-                finishGeneration(button, statusDiv);
-            }
-        });
-    });
+				// Phase 2: generate each article one-at-a-time for real progress feedback
+				function generateNext( index ) {
+					if ( index >= total ) {
+						progressBar.css( 'width', '100%' );
+						var doneMsg = generated.length + ' ' + aanp_ajax.success_text;
 
-    // Re-enable the button after a cooldown and hide the status panel
-    function finishGeneration(button, statusDiv) {
-        button.find('.dashicons').removeClass('spin');
+						if ( generated.length > 0 ) {
+							statusText.html( '<span class="aanp-status-success">✓ ' + escapeHtml( doneMsg ) + '</span>' );
 
-        var cooldown    = aanp_ajax.cooldown_seconds || 60;
-        var remaining   = cooldown;
-        var originalText = button.text().trim();
+							$.each( generated, function ( i, post ) {
+								var li = $(
+									'<li class="is-success">' +
+									'<span class="aanp-result-icon">✓</span>' +
+									'<span class="aanp-result-title">' + escapeHtml( post.title ) + '</span>' +
+									'<a class="aanp-result-link" href="' + escapeHtml( post.edit_link ) + '" target="_blank">Edit →</a>' +
+									'</li>'
+								);
+								resultsList.append( li );
+							} );
+							resultsDiv.slideDown( 200 );
+						} else {
+							statusText.html( '<span class="aanp-status-error">✗ ' + escapeHtml( aanp_ajax.error_text ) + '</span>' );
+						}
 
-        var countdownInterval = setInterval(function() {
-            remaining--;
-            button.text(aanp_ajax.cooldown_text.replace('%d', remaining));
-            if (remaining <= 0) {
-                clearInterval(countdownInterval);
-                button.prop('disabled', false);
-                button.text(originalText);
-            }
-        }, 1000);
+						finishGeneration( button, statusDiv );
+						return;
+					}
 
-        setTimeout(function() { statusDiv.fadeOut(); }, 4000);
-    }
-    
-    // Helper function to escape HTML
-    function escapeHtml(text) {
-        var map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-    }
-    
-    // Helper function to show admin notices
-    function showAdminNotice(message, type) {
-        var noticeClass = type === 'success' ? 'notice-success' : 'notice-error';
-        var notice = $('<div class="notice ' + noticeClass + ' is-dismissible"><p>' + escapeHtml(message) + '</p></div>');
-        
-        // Insert after the page title
-        $('.wrap h1').after(notice);
-        
-        // Make it dismissible
-        notice.on('click', '.notice-dismiss', function() {
-            notice.fadeOut();
-        });
-        
-        // Auto-hide success notices
-        if (type === 'success') {
-            setTimeout(function() {
-                notice.fadeOut();
-            }, 5000);
-        }
-    }
-    
-    // API Key visibility toggle
-    $('#api_key').after('<button type="button" class="button" id="toggle-api-key" style="margin-left: 10px;">Show</button>');
-    
-    $('#toggle-api-key').on('click', function() {
-        var apiKeyField = $('#api_key');
-        var button = $(this);
-        
-        if (apiKeyField.attr('type') === 'password') {
-            apiKeyField.attr('type', 'text');
-            button.text('Hide');
-        } else {
-            apiKeyField.attr('type', 'password');
-            button.text('Show');
-        }
-    });
-    
-    // Form validation
-    $('form').on('submit', function(e) {
-        var apiKey = $('#api_key').val().trim();
-        var provider = $('#llm_provider').val();
-        
-        if (!apiKey && provider !== 'custom') {
-            e.preventDefault();
-            alert('Please enter an API key for the selected LLM provider.');
-            $('#api_key').focus();
-            return false;
-        }
-        
-        // Validate RSS feeds
-        var hasValidFeed = false;
-        $('input[name="aanp_settings[rss_feeds][]"]').each(function() {
-            var feedUrl = $(this).val().trim();
-            if (feedUrl && isValidUrl(feedUrl)) {
-                hasValidFeed = true;
-                return false; // break loop
-            }
-        });
-        
-        if (!hasValidFeed) {
-            e.preventDefault();
-            alert('Please add at least one valid RSS feed URL.');
-            return false;
-        }
-    });
-    
-    // URL validation helper
-    function isValidUrl(string) {
-        try {
-            new URL(string);
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
-    
-    // Add spinning animation for dashicons
-    $('<style>').text(`
-        .dashicons.spin {
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .aanp-progress {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .aanp-progress-bar {
-            transition: width 0.3s ease;
-        }
-    `).appendTo('head');
-    
-});
+					var article = articles[ index ];
+					statusText.text( '(' + ( index + 1 ) + '/' + total + ') ' + article.title );
+					progressBar.css( 'width', Math.round( ( index / total ) * 100 ) + '%' );
+
+					$.ajax( {
+						url:  aanp_ajax.ajax_url,
+						type: 'POST',
+						data: {
+							action:  'aanp_generate_single',
+							nonce:   aanp_ajax.nonce,
+							article: article
+						},
+						success: function ( res ) {
+							if ( res.success ) { generated.push( res.data ); }
+							generateNext( index + 1 );
+						},
+						error: function () {
+							generateNext( index + 1 );
+						}
+					} );
+				}
+
+				generateNext( 0 );
+			},
+			error: function ( xhr, status, error ) {
+				statusText.html( '<span class="aanp-status-error">✗ AJAX Error: ' + escapeHtml( error ) + '</span>' );
+				finishGeneration( button, statusDiv );
+			}
+		} );
+	} );
+
+	// ── After generation: countdown cooldown ───────────────────────────────
+	function finishGeneration( button, statusDiv ) {
+		button.find( '.dashicons' ).removeClass( 'spin' );
+		button.removeClass( 'is-loading' );
+
+		var cooldown  = aanp_ajax.cooldown_seconds || 60;
+		var remaining = cooldown;
+		var origHtml  = button.html();
+
+		var timer = setInterval( function () {
+			remaining--;
+			button.html( '<span class="dashicons dashicons-clock spin"></span> ' + aanp_ajax.cooldown_text.replace( '%d', remaining ) );
+			if ( remaining <= 0 ) {
+				clearInterval( timer );
+				button.prop( 'disabled', false );
+				button.html( origHtml );
+			}
+		}, 1000 );
+
+		// hide status after a moment if nothing else is pending
+		setTimeout( function () {
+			if ( ! $( '#aanp-generation-results' ).is( ':visible' ) ) {
+				statusDiv.slideUp( 300 );
+			}
+		}, 5000 );
+	}
+
+	// ── HTML escape helper ─────────────────────────────────────────────────
+	function escapeHtml( text ) {
+		if ( typeof text !== 'string' ) { text = String( text ); }
+		var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+		return text.replace( /[&<>"']/g, function ( m ) { return map[ m ]; } );
+	}
+
+} );

@@ -142,8 +142,10 @@ No data is transmitted to any external service without the site administrator ex
 
 == Screenshots ==
 
-1. Dashboard overview — statistics grid (total, today, week, month), Generate Posts button, and recent generated posts table.
-2. Settings form — AI provider, API key, word count, tone, RSS feed management, WP-Cron scheduling, and DALL-E 3 featured image toggle.
+1. Dashboard — hero header, live statistics (total, today, week, month), Generate Posts Now button, and recent generated posts table with status badges.
+2. Settings — AI Provider card (provider selector, encrypted API key) and Content card (word count, writing tone, post categories).
+3. Settings (continued) — Auto-Scheduling card with five WP-Cron options and Featured Images card with DALL-E 3 toggle; Save Settings button.
+4. RSS Feeds — feed source list with per-feed Test and Remove buttons, Add Feed control, and Save Feeds button.
 
 == Changelog ==
 
