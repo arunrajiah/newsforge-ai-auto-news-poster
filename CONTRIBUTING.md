@@ -1,4 +1,4 @@
-# Contributing to RSS AI Post Generator
+# Contributing to ArunAI – Auto News Poster
 
 Thanks for your interest in contributing! Please take a moment to read these guidelines before opening a pull request.
 
@@ -31,8 +31,8 @@ CI runs automatically (PHP lint · PHPCS · PHPUnit)
 ## Development setup
 
 ```bash
-git clone https://github.com/arunrajiah/arunai-auto-news-poster.git
-cd arunai-auto-news-poster
+git clone https://github.com/arunrajiah/ai-auto-news-poster.git
+cd ai-auto-news-poster
 composer install
 ```
 
@@ -66,7 +66,7 @@ composer install
 | Date formatting | `gmdate( 'Y-m-d' )` |
 | SQL | `$wpdb->prepare()` for all parameterised queries |
 | Output | `esc_html()`, `esc_attr()`, `esc_url()` at point of output |
-| Translations | `esc_html__( 'Text', 'arunai-auto-news-poster' )` |
+| Translations | `esc_html__( 'Text', 'arunai-auto-news-poster' )` (text domain matches WP.org slug) |
 
 ## Git workflow
 
