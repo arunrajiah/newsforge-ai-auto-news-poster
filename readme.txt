@@ -142,11 +142,8 @@ No data is transmitted to any external service without the site administrator ex
 
 == Screenshots ==
 
-1. Main settings page with AI provider configuration
-2. RSS feed management with per-feed test button
-3. Live post generation with progress bar
-4. Statistics dashboard (total, today, week, month)
-5. Recent generated posts table with edit links
+1. Dashboard overview — statistics grid (total, today, week, month), Generate Posts button, and recent generated posts table.
+2. Settings form — AI provider, API key, word count, tone, RSS feed management, WP-Cron scheduling, and DALL-E 3 featured image toggle.
 
 == Changelog ==
 
