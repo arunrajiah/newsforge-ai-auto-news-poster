@@ -54,15 +54,21 @@ jobs:
           rsync -av --exclude="${DIST_DIR}" \
             --exclude=".git" \
             --exclude=".github" \
+            --exclude=".gitignore" \
             --exclude=".phpcs.xml" \
             --exclude=".DS_Store" \
             --exclude=".phpunit.result.cache" \
+            --exclude="CLAUDE.md" \
+            --exclude="CONTRIBUTING.md" \
+            --exclude="README.md" \
+            --exclude="docker-compose.yml" \
             --exclude="composer.json" \
             --exclude="composer.lock" \
             --exclude="phpunit.xml" \
             --exclude="vendor/" \
             --exclude="tests/" \
             --exclude="node_modules/" \
+            --exclude="assets/screenshots/" \
             --exclude="*.zip" \
             . "${DIST_DIR}/"
 

@@ -43,8 +43,13 @@ The plugin directory is volume-mounted read-only into the container, so PHP chan
 ```bash
 # Sync changed plugin files to SVN trunk and commit
 svn checkout https://plugins.svn.wordpress.org/arunai-auto-news-poster/trunk/ /tmp/svn-aanp-trunk
-rsync -av --exclude='.git' --exclude='vendor' --exclude='assets/screenshots' \
-  --exclude='docker-compose.yml' \
+rsync -av \
+  --exclude='.git' --exclude='.github' --exclude='.gitignore' \
+  --exclude='.phpcs.xml' --exclude='.phpunit.result.cache' \
+  --exclude='CLAUDE.md' --exclude='CONTRIBUTING.md' --exclude='README.md' \
+  --exclude='docker-compose.yml' --exclude='assets/screenshots/' \
+  --exclude='composer.json' --exclude='composer.lock' --exclude='phpunit.xml' \
+  --exclude='vendor/' --exclude='tests/' --exclude='*.zip' \
   /path/to/repo/ /tmp/svn-aanp-trunk/
 svn commit /tmp/svn-aanp-trunk/ -m "describe change"
 
