@@ -198,7 +198,7 @@ class AANP_AI_Generator {
 		$url = 'https://api.anthropic.com/v1/messages';
 
 		$data = array(
-			'model'      => 'claude-3-sonnet-20240229',
+			'model'      => 'claude-3-5-sonnet-20241022',
 			'max_tokens' => 2000,
 			'messages'   => array(
 				array(

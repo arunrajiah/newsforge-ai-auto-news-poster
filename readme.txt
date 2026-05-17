@@ -62,7 +62,7 @@ ArunAI – Auto News Poster transforms the latest news articles into unique, eng
 
 = What AI providers are supported? =
 
-OpenAI (GPT-3.5-turbo), Anthropic (Claude 3 Sonnet), and any OpenAI-compatible custom API endpoint (e.g. Ollama, LM Studio, OpenRouter).
+OpenAI (GPT-3.5-turbo), Anthropic (Claude 3.5 Sonnet), and any OpenAI-compatible custom API endpoint (e.g. Ollama, LM Studio, OpenRouter).
 
 = Do I need an API key? =
 
