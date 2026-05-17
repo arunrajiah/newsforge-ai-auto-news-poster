@@ -99,8 +99,8 @@ $aanp_categories = isset( $aanp_options['categories'] ) ? (array) $aanp_options[
 	</div>
 
 	<!-- ════════════════════════════════════════════════════════════════════
-	     TAB: Dashboard
-	     ════════════════════════════════════════════════════════════════════ -->
+		TAB: Dashboard
+		════════════════════════════════════════════════════════════════════ -->
 	<div class="aanp-tab-pane is-active" id="aanp-tab-dashboard">
 
 		<!-- Generate card -->
@@ -116,11 +116,8 @@ $aanp_categories = isset( $aanp_options['categories'] ) ? (array) $aanp_options[
 					?>
 					<span style="font-size:12px;color:var(--aanp-text-muted);font-weight:500;">
 						<?php
-						/* translators: %s: human-readable time, e.g. "in 2 hours" */
-						printf(
-							esc_html__( 'Next run in %s', 'arunai-auto-news-poster' ),
-							esc_html( human_time_diff( time(), $aanp_next ) )
-						);
+						// translators: %s: human-readable time, e.g. "in 2 hours".
+						printf( esc_html__( 'Next run in %s', 'arunai-auto-news-poster' ), esc_html( human_time_diff( time(), $aanp_next ) ) );
 						?>
 					</span>
 				<?php endif; ?>
@@ -223,8 +220,8 @@ $aanp_categories = isset( $aanp_options['categories'] ) ? (array) $aanp_options[
 	</div><!-- /dashboard tab -->
 
 	<!-- ════════════════════════════════════════════════════════════════════
-	     TAB: Settings
-	     ════════════════════════════════════════════════════════════════════ -->
+		TAB: Settings
+		════════════════════════════════════════════════════════════════════ -->
 	<div class="aanp-tab-pane" id="aanp-tab-settings">
 		<form method="post" action="options.php">
 			<?php settings_fields( 'aanp_settings_group' ); ?>
@@ -318,7 +315,7 @@ $aanp_categories = isset( $aanp_options['categories'] ) ? (array) $aanp_options[
 												<?php checked( in_array( (string) $aanp_cat->term_id, array_map( 'strval', $aanp_categories ), true ) ); ?> />
 											<?php echo esc_html( $aanp_cat->name ); ?>
 										</label>
-									<?php
+										<?php
 									endforeach;
 								else :
 									echo '<p style="padding:6px;color:var(--aanp-text-muted);font-size:13px;">' . esc_html__( 'No categories found.', 'arunai-auto-news-poster' ) . '</p>';
@@ -408,8 +405,8 @@ $aanp_categories = isset( $aanp_options['categories'] ) ? (array) $aanp_options[
 	</div><!-- /settings tab -->
 
 	<!-- ════════════════════════════════════════════════════════════════════
-	     TAB: RSS Feeds
-	     ════════════════════════════════════════════════════════════════════ -->
+		TAB: RSS Feeds
+		════════════════════════════════════════════════════════════════════ -->
 	<div class="aanp-tab-pane" id="aanp-tab-feeds">
 		<form method="post" action="options.php">
 			<?php settings_fields( 'aanp_settings_group' ); ?>
